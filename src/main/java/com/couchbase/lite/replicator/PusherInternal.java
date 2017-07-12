@@ -17,6 +17,7 @@ import com.couchbase.lite.ChangesOptions;
 import com.couchbase.lite.CouchbaseLiteException;
 import com.couchbase.lite.Database;
 import com.couchbase.lite.DocumentChange;
+import com.couchbase.lite.SyncGatewayDocumentRejectedException;
 import com.couchbase.lite.ReplicationFilter;
 import com.couchbase.lite.RevisionList;
 import com.couchbase.lite.Status;
@@ -214,7 +215,7 @@ public class PusherInternal extends ReplicationInternal implements Database.Chan
 
     /**
      * - (void) beginReplicating in CBL_Replicator.m
-     * 
+     *
      * beginReplicating() method is called from GET /_local/{checkpoint id} or PUT /{db}
      */
     @Override
@@ -555,6 +556,7 @@ public class PusherInternal extends ReplicationInternal implements Database.Chan
                             if (status.getCode() != Status.FORBIDDEN) {
                                 String docID = (String) item.get("id");
                                 failedIDs.add(docID);
+                                setError(new SyncGatewayDocumentRejectedException(item.containsKey("reason") ? (String) item.get("reason") : item.toString()));
                                 // TODO - port from iOS
                                 // NSURL* url = docID ? [_remote URLByAppendingPathComponent: docID] : nil;
                                 // error = CBLStatusToNSError(status, url);
