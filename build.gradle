@@ -45,42 +45,42 @@ task createMavenDirectory(type: Exec) {
 createMavenDirectory.onlyIf { System.getenv("MAVEN_UPLOAD_REPO_URL").contains("files") }
 
 // first create the directory, then do the upload
-task uploadArchivesWrapper(dependsOn: createMavenDirectory) << {
-    uploadArchives.execute()
-}
-
-// this will upload, but will not first create a directory (which is needed on some servers)
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            repository(url: System.getenv("MAVEN_UPLOAD_REPO_URL")) {
-                authentication(userName: System.getenv("MAVEN_UPLOAD_USERNAME"), password: System.getenv("MAVEN_UPLOAD_PASSWORD"))
-            }
-            pom.version = version
-            pom.groupId = 'com.couchbase.lite'
-            pom.artifactId = 'couchbase-lite-java-core'
-            pom.project {
-                licenses {
-                    license {
-                        name 'Couchbase Community Edition License Agreement'
-                        url 'http://www.couchbase.com/agreement/community'
-                        distribution 'repo'
-                    }
-                }
-            }
-        }
-    }
-}
-
-task generateJavadocs(type: Javadoc) {
-    source = sourceSets.main.java.srcDirs
-    List<File> pathList = new ArrayList<File>();
-    pathList.add(file('extra/doclet/doclet.jar'))
-    options.docletpath = pathList
-    options.doclet = "ExcludeDoclet"
-    options.showFromPublic()
-    exclude "org/apache/http/**"
-}
+//task uploadArchivesWrapper(dependsOn: createMavenDirectory) << {
+//    uploadArchives.execute()
+//}
+//
+//// this will upload, but will not first create a directory (which is needed on some servers)
+//uploadArchives {
+//    repositories {
+//        mavenDeployer {
+//            repository(url: System.getenv("MAVEN_UPLOAD_REPO_URL")) {
+//                authentication(userName: System.getenv("MAVEN_UPLOAD_USERNAME"), password: System.getenv("MAVEN_UPLOAD_PASSWORD"))
+//            }
+//            pom.version = version
+//            pom.groupId = 'com.couchbase.lite'
+//            pom.artifactId = 'couchbase-lite-java-core'
+//            pom.project {
+//                licenses {
+//                    license {
+//                        name 'Couchbase Community Edition License Agreement'
+//                        url 'http://www.couchbase.com/agreement/community'
+//                        distribution 'repo'
+//                    }
+//                }
+//            }
+//        }
+//    }
+//}
+//
+//task generateJavadocs(type: Javadoc) {
+//    source = sourceSets.main.java.srcDirs
+//    List<File> pathList = new ArrayList<File>();
+//    pathList.add(file('extra/doclet/doclet.jar'))
+//    options.docletpath = pathList
+//    options.doclet = "ExcludeDoclet"
+//    options.showFromPublic()
+//    exclude "org/apache/http/**"
+//}
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
